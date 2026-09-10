@@ -24,6 +24,13 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
+# Internal pitch & presentation documents
+*.pdf
+*.html
+generate_*.py
+generateAllDistricts.js
+server/scripts/buildSihPdf.js
+
 # Python cache & virtual environments
 __pycache__/
 *.py[cod]

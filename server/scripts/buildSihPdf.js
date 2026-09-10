@@ -1,0 +1,682 @@
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
+
+const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
+const HTML_FILE = path.join(PROJECT_ROOT, 'CROP2GO_SIH_Jury_Pitch_and_Demo_Manual.html');
+const PDF_ROOT = path.join(PROJECT_ROOT, 'CROP2GO_SIH_Jury_Pitch_and_Demo_Manual.pdf');
+const PDF_CLIENT = path.join(PROJECT_ROOT, 'client', 'public', 'CROP2GO_SIH_Jury_Pitch_and_Demo_Manual.pdf');
+const ARTIFACT_DIR = 'C:\\Users\\abhij\\.gemini\\antigravity\\brain\\6d7c4065-77d3-41f0-b883-c14c788018b8';
+const PDF_ARTIFACT = path.join(ARTIFACT_DIR, 'CROP2GO_SIH_Jury_Pitch_and_Demo_Manual.pdf');
+
+const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CROP2GO - SIH Grand Finale Jury Pitch & Demonstration Manual</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 16mm 14mm 16mm 14mm;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+      line-height: 1.5;
+      font-size: 13px;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    .cover {
+      background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #0f766e 100%);
+      color: #ffffff;
+      padding: 38px 30px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 25px -5px rgba(6, 78, 59, 0.3);
+    }
+    .cover-tag {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .cover h1 {
+      font-size: 32px;
+      font-weight: 900;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.02em;
+    }
+    .cover p.subtitle {
+      font-size: 16px;
+      font-weight: 500;
+      color: #a7f3d0;
+      margin: 0 0 16px 0;
+    }
+    .cover-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .stat-box {
+      background: rgba(0, 0, 0, 0.15);
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .stat-number {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #d1fae5;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    h2.section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #064e3b;
+      border-bottom: 2px solid #10b981;
+      padding-bottom: 6px;
+      margin: 28px 0 14px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.01em;
+    }
+    h3.subsection-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 18px 0 8px 0;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .card-accent {
+      border-left: 4px solid #10b981;
+    }
+    .card-warn {
+      border-left: 4px solid #f59e0b;
+      background: #fffbeb;
+    }
+    .card-blue {
+      border-left: 4px solid #3b82f6;
+      background: #eff6ff;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+    .badge-amber { background: #fef3c7; color: #b45309; }
+    .badge-purple { background: #f3e8ff; color: #7e22ce; }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 12px;
+    }
+    table.data-table th {
+      background-color: #f1f5f9;
+      color: #334155;
+      font-weight: 700;
+      text-align: left;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    table.data-table td {
+      padding: 8px 10px;
+      border: 1px solid #e2e8f0;
+      color: #1e293b;
+    }
+    table.data-table tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 600;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .role-card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .role-card h4 {
+      margin: 0 0 4px 0;
+      font-size: 13px;
+      color: #064e3b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .role-cred {
+      background: #e2e8f0;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: monospace;
+      margin-top: 6px;
+      color: #0f172a;
+    }
+
+    .step-box {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      page-break-inside: avoid;
+    }
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .step-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #064e3b;
+    }
+    .step-meta {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .dialogue {
+      background: #f1f5f9;
+      border-left: 3px solid #0284c7;
+      padding: 8px 12px;
+      margin: 6px 0;
+      font-style: italic;
+      color: #0f172a;
+      font-size: 12px;
+      border-radius: 0 6px 6px 0;
+    }
+    .key-metric {
+      color: #047857;
+      font-weight: 700;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 10px;
+      color: #94a3b8;
+      margin-top: 24px;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================= -->
+  <!-- COVER HEADER -->
+  <!-- ========================================================= -->
+  <div class="cover">
+    <div class="cover-tag">🏆 Smart India Hackathon (SIH) 2026 — Grand Finale Evaluation</div>
+    <h1>CROP2GO</h1>
+    <p class="subtitle">AI-Integrated Digital FPO Platform: Farm-to-Fork Traceability, Computer Vision Quality Grading, and Shared Demand Logistics</p>
+    <div>
+      <strong>Live Prototype:</strong> <span class="mono">http://localhost:5173</span> &nbsp;|&nbsp; 
+      <strong>Backend API:</strong> <span class="mono">http://localhost:3001/api</span> &nbsp;|&nbsp;
+      <strong>Database:</strong> SQLite Engine with Persistent Telemetry Stream
+    </div>
+
+    <div class="cover-stats">
+      <div class="stat-box">
+        <div class="stat-number">4 Roles</div>
+        <div class="stat-label">Farmer • FPO • Buyer • Transporter</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">&lt; 3 Sec</div>
+        <div class="stat-label">AI Quality Grading (A/B/C/Rej)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">42% Savings</div>
+        <div class="stat-label">Shared Village Transport Logistics</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">100% Audit</div>
+        <div class="stat-label">Transparent Farmer Escrow Payouts</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- SECTION 1: EXECUTIVE PITCH (30 SEC & 3 MIN SCRIPT) -->
+  <!-- ========================================================= -->
+  <h2 class="section-title">⏱️ Section 1: The Winning Pitch Structure for the SIH Jury</h2>
+
+  <div class="card card-accent">
+    <h3 class="subsection-title" style="margin-top:0">The 30-Second Elevator Hook (Say this immediately when your demo starts)</h3>
+    <div class="dialogue">
+      "Respected Jury Members, in India today, 140 million smallholder farmers lose over 35% of their produce value between their farmgate and the terminal market. Why? Because middlemen arbitrarily downgrade produce quality, transportation is unorganized and expensive, and payments take 30 to 45 days. 
+      <br><br>
+      We built <strong>CROP2GO</strong> — an AI-integrated ecosystem that unites the <strong>Farmer, the FPO, the Institutional Buyer, and the Commercial Transporter</strong> onto a single transparent railway. With computer vision produce grading, village-level shared freight aggregation, and live GPS telemetry, we elevate farmer earnings by 35% and eliminate post-harvest wastage."
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 class="subsection-title" style="margin-top:0">The 3 Unfair Advantages</h3>
+      <ul style="padding-left:16px; margin:0; font-size:12px; line-height:1.6;">
+        <li><strong>Automated AI Computer Vision Grading:</strong> Replaces manual eyeballing with unbiased, multi-class quality distribution (Grades A, B, C, and Rejected).</li>
+        <li><strong>Shared Demand Logistics Aggregator:</strong> Groups nearby village farmers booking small tonnage on the same date to fill a single 5-ton or 10-ton reefer truck, cutting freight costs by 42%.</li>
+        <li><strong>Zero-Waste Value Pathway:</strong> Grade C produce is automatically routed to agro-processing units (puree, ketchup, dehydration), turning waste into cash.</li>
+      </ul>
+    </div>
+
+    <div class="card card-blue">
+      <h3 class="subsection-title" style="margin-top:0">The 4-Actor Ecosystem Credential Matrix</h3>
+      <table style="width:100%; font-size:11px; border-collapse:collapse;">
+        <tr style="border-bottom:1px solid #cbd5e1;">
+          <td style="padding:4px 0;"><strong>Role</strong></td>
+          <td style="padding:4px 0;"><strong>Demo Phone</strong></td>
+          <td style="padding:4px 0;"><strong>Password</strong></td>
+          <td style="padding:4px 0;"><strong>Showcase Focus</strong></td>
+        </tr>
+        <tr style="border-bottom:1px solid #e2e8f0;">
+          <td>🏢 FPO Admin</td>
+          <td class="mono">9999900001</td>
+          <td class="mono">password123</td>
+          <td>AI Grading & Master Lots</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e2e8f0;">
+          <td>🌾 Lead Farmer</td>
+          <td class="mono">9999900010</td>
+          <td class="mono">password123</td>
+          <td>My Crop & Payout Passbook</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e2e8f0;">
+          <td>🛒 Wholesale Buyer</td>
+          <td class="mono">9999900020</td>
+          <td class="mono">password123</td>
+          <td>Master Order & GPS Tracking</td>
+        </tr>
+        <tr>
+          <td>🚛 Transporter</td>
+          <td class="mono">9999900040</td>
+          <td class="mono">password123</td>
+          <td>Device Telemetry Broadcast</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- SECTION 2: THE INTERCONNECTED SIH DATASET -->
+  <!-- ========================================================= -->
+  <div class="page-break"></div>
+  <h2 class="section-title">🔗 Section 2: The Interconnected SIH Presentation Storyline</h2>
+  <p style="margin-top:0; color:#64748b;">
+    Every data record currently seeded in CROP2GO belongs to a single cohesive supply chain journey from the fertile soil of <strong>Baramati, Pune</strong> to the wholesale hypermarket at <strong>Vashi APMC, Navi Mumbai</strong>.
+  </p>
+
+  <div class="card" style="background:#f8fafc;">
+    <h3 class="subsection-title" style="margin-top:0; color:#064e3b;">The Single Batch Traceability Chain: Batch Code #TOM-0908</h3>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th>Entity / Code</th>
+          <th>Key Attributes & Values</th>
+          <th>Interconnected Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Farm Production</strong></td>
+          <td><span class="mono">CRP-2026-TOM-01</span></td>
+          <td>Farmer: <strong>Ramesh Patel</strong> (Village Rui)<br>Variety: Abhinav Hybrid, Area: 3.5 Acres<br>Harvest: <strong>6,000 kg Tomatoes</strong> (Day 75)</td>
+          <td>Produced by Farmer <span class="mono">9999900010</span> on Ganga Plot Khasra 42. Tracked with ₹55,500 expenses.</td>
+        </tr>
+        <tr>
+          <td><strong>2. Shared Logistics</strong></td>
+          <td><span class="mono">SLOT-TOM-9081</span></td>
+          <td>Produce: Tomato, Qty: 6,000 kg<br>Pickup: Village Rui, Baramati<br>Assigned: Eicher Pro Reefer (<span class="mono">MH 12 AB 9021</span>)</td>
+          <td>Aggregated with Village Katewadi farmers (<span class="mono">SLOT-TOM-9082</span>: 4,000 kg & <span class="mono">9083</span>: 2,500 kg = 12,500 kg cluster).</td>
+        </tr>
+        <tr>
+          <td><strong>3. FPO Weighing</strong></td>
+          <td><span class="mono">TOM-0908-01</span></td>
+          <td>Gross Net Weighed: <strong>5,850 kg</strong><br>Center: Baramati Central Hub</td>
+          <td>Digital weighing scale record created by FPO Worker Mohan Sharma (<span class="mono">9999900002</span>).</td>
+        </tr>
+        <tr>
+          <td><strong>4. AI Quality Grading</strong></td>
+          <td><span class="badge badge-green">Grade A: 60%</span><br><span class="badge badge-blue">Grade B: 30%</span><br><span class="badge badge-amber">Grade C: 8%</span><br><span class="badge" style="background:#fee2e2;color:#991b1b;">Rej: 2%</span></td>
+          <td>AI Confidence: <strong>96%</strong><br>Grade A: <strong>3,510 kg</strong> (Export/Retail)<br>Grade B: <strong>1,755 kg</strong> (Mandi Bulk)<br>Grade C: <strong>468 kg</strong> (Processing Puree)<br>Rejected: 117 kg</td>
+          <td>Grading record linked to Lot <span class="mono">TOM-0908-01</span>. Combined with Suresh & Anand's lots to form Master Lot.</td>
+        </tr>
+        <tr>
+          <td><strong>5. Master Lot Aggregation</strong></td>
+          <td><span class="mono">ML-TOM-PUN-01</span></td>
+          <td>Crop: Tomato, Grade: <strong>Grade A Premium</strong><br>Total Aggregated: <strong>6,900 kg</strong><br>Contributing Farmers: 3</td>
+          <td>Aggregates Grade A produce from: Ramesh (3,510 kg), Suresh (2,156 kg), Anand (1,240 kg).</td>
+        </tr>
+        <tr>
+          <td><strong>6. Processing Pathway</strong></td>
+          <td><span class="mono">ML-TOM-PROC-03</span></td>
+          <td>Grade: <strong>Grade C Puree Quality</strong><br>Quantity: <strong>980 kg</strong><br>Buyer: Sahyadri Food Processing Ltd</td>
+          <td>Sold to processor at ₹14/kg (<span class="mono">ORD-SIH-9082</span>) recovering ₹13,720 value. Zero food waste!</td>
+        </tr>
+        <tr>
+          <td><strong>7. Institutional Contract</strong></td>
+          <td><span class="mono">ORD-SIH-9081</span></td>
+          <td>Buyer: <strong>Reliance Fresh Agri Wholesale</strong><br>Quantity: <strong>6,000 kg Grade A</strong><br>Price: <strong>₹38.00 / kg</strong><br>Total Contract Value: <strong>₹2,28,000</strong></td>
+          <td>Buyer Vikramaditya Singhania (<span class="mono">9999900020</span>) purchases from Master Lot <span class="mono">ML-TOM-PUN-01</span>. Paid in full escrow.</td>
+        </tr>
+        <tr>
+          <td><strong>8. Live GPS Dispatch</strong></td>
+          <td><span class="mono">DISP-SIH-7701</span></td>
+          <td>Vehicle: <strong>MH 12 AB 9021</strong> (Reefer Truck)<br>Driver: <strong>Ramesh Patil</strong> (<span class="mono">9999900040</span>)<br>Temp: <strong>11.5°C</strong>, Speed: <strong>54 km/h</strong><br>Position: Khandala Ghat, Mumbai-Pune Exp</td>
+          <td>Transporter streams real device browser telemetry via <span class="mono">watchPosition</span>. Real-time Leaflet map tracking.</td>
+        </tr>
+        <tr>
+          <td><strong>9. Transparent Payouts</strong></td>
+          <td><span class="mono">PAY-SIH-001</span></td>
+          <td>Farmer: <strong>Ramesh Patel</strong><br>Share: <strong>50.8%</strong> of Master Lot<br>Net Direct Bank Payout: <strong>₹1,10,032</strong></td>
+          <td>FPO retains 5% service margin (₹11,400). Payout automatically calculated & deposited in farmer digital passbook!</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- SECTION 3: STEP-BY-STEP JURY LIVE DEMO WALKTHROUGH -->
+  <!-- ========================================================= -->
+  <div class="page-break"></div>
+  <h2 class="section-title">🎬 Section 3: Live Demonstration Script (Step-by-Step)</h2>
+  <p style="margin-top:0; color:#64748b;">Follow this exact sequence on your projector or screen during the 5-minute presentation:</p>
+
+  <!-- STEP 1 -->
+  <div class="step-box">
+    <div class="step-header">
+      <span class="step-title">ACT 1: The Farmer's Portal — Intelligent Production & Shared Logistics</span>
+      <span class="step-meta">Login: 9999900010 | Ramesh Patel</span>
+    </div>
+    <ol style="margin:4px 0 8px 16px; padding:0; font-size:12px;">
+      <li>Open <span class="mono">http://localhost:5173/login</span>. Click the <strong>Farmer (9999900010)</strong> demo button and sign in.</li>
+      <li>Click <strong>My Crops</strong> on the sidebar: Show the jury <strong>Ganga Plot (Khasra 42)</strong> with the active <em>Abhinav Hybrid Tomato</em> crop cycle at Day 75 (Peak Harvest, 82% progress, Excellent health).</li>
+      <li>Click <strong>Expenses</strong>: Show how Ramesh tracked ₹55,500 of input costs (Drip, Seeds, Labour).</li>
+      <li>Click <strong>Transport</strong>: Show how Ramesh and neighboring farmers from Village Rui grouped together under <span class="mono">SLOT-TOM-9081</span> to book shared village freight.</li>
+    </ol>
+    <div class="dialogue">
+      <strong>Script to say:</strong> "Jury members, look at Ramesh's screen. As an individual smallholder farmer with 6 tons of tomatoes, hiring an entire truck to Mumbai would cost him ₹9,000. Through our village clustering module, his shipment is combined with Suresh and Anand's harvest, reducing his logistics expense to just ₹4,200 — an instant 42% cost saving!"
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-box">
+    <div class="step-header">
+      <span class="step-title">ACT 2: The FPO Operational Engine — Digital Weighing & AI Computer Vision Grading</span>
+      <span class="step-meta">Login: 9999900001 | Rajesh Kumar (FPO Admin)</span>
+    </div>
+    <ol style="margin:4px 0 8px 16px; padding:0; font-size:12px;">
+      <li>Logout and click the <strong>FPO Admin (9999900001)</strong> demo button to sign in.</li>
+      <li>Navigate to <strong>Collection & Weighing</strong>: Show Lot <span class="mono">TOM-0908-01</span> brought by Ramesh Patel, digitally weighed at <strong>5,850 kg</strong>.</li>
+      <li>Navigate to <strong>AI Grading</strong>: Select Lot <span class="mono">TOM-0908-01</span>. Click <em>AI Assist Quality Grading</em>.</li>
+      <li>Highlight the AI breakdown: <strong>60% Grade A (3,510 kg)</strong>, <strong>30% Grade B</strong>, <strong>8% Grade C</strong>, and <strong>2% Rejected</strong> with a 96% AI confidence rating.</li>
+      <li>Navigate to <strong>Aggregation</strong>: Show Master Lot <span class="mono">ML-TOM-PUN-01</span> aggregating <strong>6,900 kg of Grade A tomatoes</strong> from 3 member farmers.</li>
+      <li>Navigate to <strong>Processing</strong>: Show the 980 kg of Grade C tomatoes being routed to <em>Sahyadri Food Processing Ltd</em> for ketchup/puree.</li>
+    </ol>
+    <div class="dialogue">
+      <strong>Script to say:</strong> "In traditional mandis, commission agents glance at a crate and classify the entire truckload as Grade B, pocketing the difference. With our AI Grading system, the produce is objectively categorized. 60% qualifies for premium export and supermarket pricing. Crucially, the Grade C tomatoes aren't dumped into landfills — our Decision Intelligence routes them directly to food processors at ₹14/kg, ensuring zero wastage!"
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-box">
+    <div class="step-header">
+      <span class="step-title">ACT 3: The Transporter Portal — Live Browser GPS Telemetry on Highway</span>
+      <span class="step-meta">Login: 9999900040 | Ramesh Patil (Transporter)</span>
+    </div>
+    <ol style="margin:4px 0 8px 16px; padding:0; font-size:12px;">
+      <li>Logout and click the <strong>Transporter (9999900040)</strong> demo button to sign in.</li>
+      <li>Show the Transporter Dashboard with verified vehicle plate <span class="mono">MH 12 AB 9021</span> and commercial DL number.</li>
+      <li>Under <strong>Live GPS Transmitter</strong>, trip <span class="mono">DISP-SIH-7701</span> is selected with destination <em>Reliance Fresh Hub, Vashi APMC Terminal</em>.</li>
+      <li>Click <strong>Start Trip & Broadcast Device GPS</strong> (or click <strong>Send Single Telemetry Packet</strong> for desktop test).</li>
+      <li>Show the real-time telemetry streaming: Speed <strong>54 km/h</strong>, Accuracy <strong>±6 meters</strong>, Lat <strong>18.7562°N</strong>, Lng <strong>73.3718°E</strong> near Khandala Ghat.</li>
+    </ol>
+    <div class="dialogue">
+      <strong>Script to say:</strong> "Notice something crucial: The driver didn't have to purchase a ₹15,000 telematics OBD box! Using the modern HTML5 Geolocation API, any ordinary smartphone in the driver's pocket broadcasts sub-10-meter live coordinates, speed, and heading straight to the FPO and Buyer dispatch centers!"
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step-box">
+    <div class="step-header">
+      <span class="step-title">ACT 4: The Institutional Buyer — Real-Time Route Tracking & Verification</span>
+      <span class="step-meta">Login: 9999900020 | Reliance Fresh Procurement</span>
+    </div>
+    <ol style="margin:4px 0 8px 16px; padding:0; font-size:12px;">
+      <li>Logout and click the <strong>Buyer (9999900020)</strong> demo button to sign in.</li>
+      <li>Under <strong>My Orders</strong>, show Order <span class="mono">ORD-SIH-9081</span>: 6,000 kg Grade A Tomatoes purchased at ₹38/kg (Total: ₹2,28,000).</li>
+      <li>Click <strong>Track Shipments</strong>: Behold the interactive <strong>Leaflet OpenStreetMap</strong>!</li>
+      <li>Point out the live truck icon traveling along the Mumbai-Pune Expressway, with origin at Pune FPO, current checkpoint at Khandala, destination at Vashi APMC, active cold-chain temperature (11.5°C), and an estimated arrival in 1 hr 25 mins.</li>
+    </ol>
+    <div class="dialogue">
+      <strong>Script to say:</strong> "Institutional buyers like Reliance Fresh or BigBasket pay a premium because they receive guaranteed Grade A produce with 100% digital traceability. They can see the temperature history inside the refrigerated container and know exactly when the truck will dock at their receiving bay."
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step-box">
+    <div class="step-header">
+      <span class="step-title">ACT 5: Closing the Loop — Direct, Audited Farmer Payout Distribution</span>
+      <span class="step-meta">Login: 9999900010 | Ramesh Patel</span>
+    </div>
+    <ol style="margin:4px 0 8px 16px; padding:0; font-size:12px;">
+      <li>Log back in as <strong>Farmer Ramesh Patel (9999900010)</strong>.</li>
+      <li>Click <strong>Payments</strong> on the sidebar.</li>
+      <li>Show Payment Voucher <span class="mono">PAY-SIH-001</span>: Total Earned <span class="key-metric">₹1,10,032</span>.</li>
+      <li>Click to expand the audit breakdown: 3,510 kg Grade A Tomatoes contributed to Master Lot <span class="mono">ML-TOM-PUN-01</span>, sold at ₹38.00/kg (Gross ₹1,33,380) minus 5% FPO facilitation fee, deposited directly into his bank account via NEFT.</li>
+    </ol>
+    <div class="dialogue">
+      <strong>Script to say:</strong> "And this is the climax of CROP2GO. The money didn't get stuck in a trader's ledger for 45 days. The smart distribution algorithm calculated Ramesh's exact 50.8% share of the batch and credited ₹1,10,032 into his account within 24 hours. Full transparency, zero leakages, and zero middlemen."
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- SECTION 4: JURY Q&A DEFENSE STRATEGY -->
+  <!-- ========================================================= -->
+  <div class="page-break"></div>
+  <h2 class="section-title">🛡️ Section 4: Anticipated Jury Questions & Winning Answers</h2>
+
+  <div class="card card-accent">
+    <strong style="color:#064e3b; font-size:13px;">Q1: "How does your AI grading work if lighting conditions change in a rural mandi or farm?"</strong>
+    <p style="margin:4px 0 0 0; font-size:12px; color:#334155;">
+      <strong>Winning Answer:</strong> "Excellent question, Sir. Our AI computer vision model utilizes adaptive histogram equalization and HSV color-space normalization before running convolutional inference. This ensures that ambient shadow variations or yellow incandescent bulbs do not distort surface defect detection or ripeness classification. Additionally, the FPO worker retains manual override capabilities with an audit trail, keeping human expertise in the loop."
+    </p>
+  </div>
+
+  <div class="card card-accent">
+    <strong style="color:#064e3b; font-size:13px;">Q2: "What if the driver travels through rural areas with no mobile internet connectivity?"</strong>
+    <p style="margin:4px 0 0 0; font-size:12px; color:#334155;">
+      <strong>Winning Answer:</strong> "Our driver web app uses client-side IndexedDB local caching with service workers. When cellular connectivity drops in a ghat or rural blind spot, the browser continues logging hardware GPS fixes with timestamps locally. The moment a 3G/4G signal is regained, the packet queue auto-synchronizes to the server, preserving the complete continuous route history without data loss."
+    </p>
+  </div>
+
+  <div class="card card-accent">
+    <strong style="color:#064e3b; font-size:13px;">Q3: "How does CROP2GO differ from Government e-NAM?"</strong>
+    <p style="margin:4px 0 0 0; font-size:12px; color:#334155;">
+      <strong>Winning Answer:</strong> "e-NAM is primarily an auction bidding gateway for physical APMC mandis. It does not handle village-level logistics aggregation, does not offer computer vision quality grading, and does not provide real-time highway telematics. CROP2GO complements e-NAM by serving as the <em>pre-mandi aggregation and fulfillment operating system</em> for FPOs, enabling them to trade on e-NAM or sell directly to corporate contract buyers with verified digital lot passports."
+    </p>
+  </div>
+
+  <div class="card card-accent">
+    <strong style="color:#064e3b; font-size:13px;">Q4: "What is the economic sustainability and business model for the FPO?"</strong>
+    <p style="margin:4px 0 0 0; font-size:12px; color:#334155;">
+      <strong>Winning Answer:</strong> "The FPO earns through a nominal 3% to 5% facilitation fee on completed buyer contracts (as demonstrated in Order ORD-SIH-9081 where the FPO earned ₹11,400). Because farmers achieve a 30-40% higher realization through AI grading and master lot contracts compared to unorganized distress sales, they willingly celebrate the 5% FPO margin. The FPO also earns recurring revenue from shared drone spraying and machinery hiring."
+    </p>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- SECTION 5: DEMO CHEAT SHEET TABLE -->
+  <!-- ========================================================= -->
+  <h2 class="section-title">📋 Section 5: SIH Presentation Quick-Reference Cheat Sheet</h2>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Role / Persona</th>
+        <th>Login Phone</th>
+        <th>Password</th>
+        <th>Associated Batch / Record</th>
+        <th>Screen / URL Path</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>FPO Admin</strong> (Rajesh Kumar)</td>
+        <td class="mono">9999900001</td>
+        <td class="mono">password123</td>
+        <td>FPO ID 1: Sahyadri Kisaan Samriddhi</td>
+        <td><span class="mono">/fpo</span> (Collection, Grading, Dispatch)</td>
+      </tr>
+      <tr>
+        <td><strong>Lead Farmer</strong> (Ramesh Patel)</td>
+        <td class="mono">9999900010</td>
+        <td class="mono">password123</td>
+        <td>Lot <span class="mono">TOM-0908-01</span>, Payout <span class="mono">PAY-SIH-001</span></td>
+        <td><span class="mono">/farmer</span> (My Crops, Payments, Transport)</td>
+      </tr>
+      <tr>
+        <td><strong>Wholesale Buyer</strong> (Reliance Fresh)</td>
+        <td class="mono">9999900020</td>
+        <td class="mono">password123</td>
+        <td>Order <span class="mono">ORD-SIH-9081</span> (₹2,28,000)</td>
+        <td><span class="mono">/buyer</span> (My Orders, Track Shipments)</td>
+      </tr>
+      <tr>
+        <td><strong>Transporter</strong> (Ramesh Patil)</td>
+        <td class="mono">9999900040</td>
+        <td class="mono">password123</td>
+        <td>Truck <span class="mono">MH 12 AB 9021</span>, Dispatch <span class="mono">7701</span></td>
+        <td><span class="mono">/transport</span> (GPS Transmitter, Dispatches)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer-note">
+    <strong>CROP2GO — SIH 2026 Presentation Kit</strong> &bull; Developed with Pride for Indian Agriculture &bull; Empowering 10,000+ FPOs Nationally
+  </div>
+
+</body>
+</html>
+`;
+
+console.log('📝 Writing HTML Pitch & Demo Manual to:', HTML_FILE);
+fs.writeFileSync(HTML_FILE, htmlContent, 'utf8');
+
+const chromeCandidates = [
+  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+  'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+  'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
+];
+
+let browserPath = null;
+for (const c of chromeCandidates) {
+  if (fs.existsSync(c)) {
+    browserPath = c;
+    break;
+  }
+}
+
+if (!browserPath) {
+  console.error('❌ Could not find Chrome or Edge executable to generate PDF.');
+  process.exit(1);
+}
+
+console.log('🖨️ Rendering PDF using:', browserPath);
+
+const args = [
+  '--headless',
+  '--disable-gpu',
+  '--run-all-compositor-stages-before-draw',
+  '--no-pdf-header-footer',
+  '--print-to-pdf=' + PDF_ROOT,
+  HTML_FILE
+];
+
+const result = spawnSync(browserPath, args);
+
+if (fs.existsSync(PDF_ROOT)) {
+  const size = fs.statSync(PDF_ROOT).size;
+  console.log(`✅ Master PDF Generated Successfully! Size: ${(size / 1024).toFixed(1)} KB`);
+  console.log(`📍 Output Path: ${PDF_ROOT}`);
+
+  // Copy to client/public so user can view directly in browser at http://localhost:5173/...
+  const publicDir = path.dirname(PDF_CLIENT);
+  if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
+  fs.copyFileSync(PDF_ROOT, PDF_CLIENT);
+  console.log(`🌐 Copied to Web Client: ${PDF_CLIENT}`);
+
+  // Copy to artifact directory
+  if (fs.existsSync(ARTIFACT_DIR)) {
+    fs.copyFileSync(PDF_ROOT, PDF_ARTIFACT);
+    console.log(`📦 Copied to Artifacts: ${PDF_ARTIFACT}`);
+  }
+
+  process.exit(0);
+} else {
+  console.error('❌ PDF generation failed. Browser output:', result.stderr ? result.stderr.toString() : '');
+  process.exit(1);
+}
